@@ -32,11 +32,7 @@ public class UserService {
             return CustomResponse.failed(Error.EMAIL_ALREADY_EXIST);
         }
 
-        if (!isValidPassword(password)) {
-            return CustomResponse.failed(Error.INVALID_PASSWORD);
-
-        } else {
-
+        if (isValidPassword(password)) {
             User user = User.builder()
                     .username(username)
                     .email(email)
@@ -45,6 +41,9 @@ public class UserService {
 
             repository.save(user);
             return CustomResponse.noBodySuccess();
+
+        } else {
+            return CustomResponse.failed(Error.INVALID_PASSWORD);
         }
     }
 

@@ -35,10 +35,10 @@ public class TaskService {
     public CustomResponse<List<Task>> getAllUserTasks(User user) {
         List<Task> tasks = getUserTasks(user);
 
-        if (!tasks.isEmpty()) {
-            return CustomResponse.success(tasks);
-        } else {
+        if (tasks.isEmpty()) {
             return CustomResponse.failed(Error.TASKS_NOT_FOUND);
+        } else {
+            return CustomResponse.success(tasks);
         }
     }
 
@@ -49,10 +49,10 @@ public class TaskService {
                 .filter(Task::isActive)
                 .toList();
 
-        if (!activeTasks.isEmpty()) {
-            return CustomResponse.success(activeTasks);
-        } else {
+        if (activeTasks.isEmpty()) {
             return CustomResponse.failed(Error.ACTIVE_TASKS_NOT_FOUND);
+        } else {
+            return CustomResponse.success(activeTasks);
         }
     }
 
@@ -69,10 +69,10 @@ public class TaskService {
                 .sorted()
                 .toList();
 
-        if (!filteredTasks.isEmpty()) {
-            return CustomResponse.success(filteredTasks);
-        } else {
+        if (filteredTasks.isEmpty()) {
             return CustomResponse.failed(Error.TASKS_NOT_FOUND);
+        } else {
+            return CustomResponse.success(filteredTasks);
         }
     }
 
@@ -83,10 +83,10 @@ public class TaskService {
                 .filter(Task::isActive)
                 .toList();
 
-        if (!filteredTasks.isEmpty()) {
-            return CustomResponse.success(filteredTasks);
-        } else {
+        if (filteredTasks.isEmpty()) {
             return CustomResponse.failed(Error.ACTIVE_TASKS_NOT_FOUND);
+        } else {
+            return CustomResponse.success(filteredTasks);
         }
     }
 

@@ -86,10 +86,11 @@ jobs:
       run: chmod +x ./gradlew
 
     - name: Run PMD Analysis with Gradle
-      run: |
-       ./gradlew runPmd || true
+      continue-on-error: true
+      run: ./gradlew runPmd
 
     - name: Upload PMD Report
+      if: ${{ always() }}
       uses: actions/upload-artifact@v2
       with:
         name: pmd-report

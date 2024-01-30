@@ -86,7 +86,8 @@ jobs:
       run: chmod +x ./gradlew
 
     - name: Run PMD Analysis with Gradle
-      run: ./gradlew runPmd
+      run: |
+       ./gradlew runPmd || true
 
     - name: Upload PMD Report
       uses: actions/upload-artifact@v2

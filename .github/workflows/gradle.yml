@@ -86,7 +86,6 @@ jobs:
       run: chmod +x ./gradlew
 
     - name: Run PMD Analysis with Gradle
-      continue-on-error: true
       run: ./gradlew runPmd
 
     - name: Upload PMD Report

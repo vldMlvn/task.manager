@@ -1,0 +1,8 @@
+CREATE TABLE tasks (
+  id SERIAL PRIMARY KEY,
+  user_id INT NOT NULL,
+  description VARCHAR(300) NOT NULL,
+  data TIMESTAMP NOT NULL,
+  create_data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);

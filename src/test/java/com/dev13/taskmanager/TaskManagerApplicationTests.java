@@ -21,6 +21,10 @@ class TaskManagerApplicationTests {
     @Container
     private static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:latest");
 
+    @Test
+    void contextLoads() {
+    }
+
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
@@ -30,8 +34,5 @@ class TaskManagerApplicationTests {
                     "spring.datasource.password=" + postgresContainer.getPassword()
             ).applyTo(configurableApplicationContext.getEnvironment());
         }
-    }
-    @Test
-    void contextLoads() {
     }
 }

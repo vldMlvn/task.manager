@@ -10,29 +10,29 @@ import lombok.Setter;
 public class CustomResponse<T> {
 
     private Error error;
-    private T dto;
+    private T body;
 
     public static <T> CustomResponse<T> success(T dto) {
         return CustomResponse
                 .<T>builder()
                 .error(Error.OK)
-                .dto(dto)
+                .body(dto)
                 .build();
     }
 
-    public static <T> CustomResponse<T> noBodySuccess(){
+    public static <T> CustomResponse<T> noBodySuccess() {
         return CustomResponse.
                 <T>builder()
                 .error(Error.OK)
-                .dto(null)
+                .body(null)
                 .build();
     }
 
-    public static <T> CustomResponse<T> failed (Error error){
+    public static <T> CustomResponse<T> failed(Error error) {
         return CustomResponse
                 .<T>builder()
                 .error(error)
-                .dto(null)
+                .body(null)
                 .build();
     }
 }

@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository repository;
     private static final Byte MAX_PASSWORD_LENGTH = 20;
     private static final Byte MIN_PASSWORD_LENGTH = 8;
     private static final Byte MAX_USERNAME_LENGTH = 20;
     private static final Byte MIN_USERNAME_LENGTH = 4;
+    private final UserRepository repository;
 
     public CustomResponse<User> create
             (final String username, final String email, final String password) {
@@ -48,11 +48,11 @@ public class UserService {
     }
 
     private boolean isValidUsername(String username) {
-          return username.length() <= MAX_USERNAME_LENGTH &&
+        return username.length() <= MAX_USERNAME_LENGTH &&
                 username.length() >= MIN_USERNAME_LENGTH;
     }
 
-    private boolean isValidPassword(String password){
+    private boolean isValidPassword(String password) {
         return password.length() <= MAX_PASSWORD_LENGTH &&
                 password.length() >= MIN_PASSWORD_LENGTH;
     }

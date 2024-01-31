@@ -5,7 +5,10 @@ import com.dev13.taskmanager.data.DateRange;
 import com.dev13.taskmanager.data.Error;
 import com.dev13.taskmanager.entity.Task;
 import com.dev13.taskmanager.entity.User;
+import com.dev13.taskmanager.entity.dto.TaskDto;
 import com.dev13.taskmanager.repository.TaskRepository;
+import com.dev13.taskmanager.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,77 +23,119 @@ import java.util.function.Predicate;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
-    public CustomResponse<Task> create
-            (User user, String description, LocalDateTime date) {
+    public CustomResponse<TaskDto> create
+            (String username, String description, LocalDateTime date) {
+        Optional<User> user = userRepository.findByUsername(username);
 
-        Task task = Task.builder()
-                .user(user)
-                .description(description)
-                .date(date)
-                .build();
-        return CustomResponse.success(task);
-    }
+        if (user.isPresent()) {
+            Task task = Task.builder()
+                    .user(user.get())
+                    .description(description)
+                    .date(date)
+                    .createDate(LocalDateTime.now())
+                    .isActive(true)
+                    .build();
 
-    public CustomResponse<List<Task>> getAllUserTasks(User user) {
-        List<Task> tasks = getUserTasks(user);
-
-        if (tasks.isEmpty()) {
-            return CustomResponse.failed(Error.TASKS_NOT_FOUND);
+            TaskDto taskDto = convertToDto(task);
+            return CustomResponse.success(taskDto);
         } else {
-            return CustomResponse.success(tasks);
+            return CustomResponse.failed(Error.USER_NOT_FOUND);
         }
     }
 
-    public CustomResponse<List<Task>> getAllActiveUserTask(User user) {
-        List<Task> tasks = getUserTasks(user);
+    public CustomResponse<TaskDto> getTaskById(Long id) {
+        Optional<Task> task = taskRepository.findById(id);
 
-        List<Task> activeTasks = tasks.stream()
-                .filter(Task::isActive)
-                .toList();
-
-        if (activeTasks.isEmpty()) {
-            return CustomResponse.failed(Error.ACTIVE_TASKS_NOT_FOUND);
+        if (task.isPresent()) {
+            TaskDto taskDto = convertToDto(task.get());
+            return CustomResponse.success(taskDto);
         } else {
-            return CustomResponse.success(activeTasks);
+            return CustomResponse.failed(Error.TASK_NOT_FOUND);
         }
     }
 
-    public CustomResponse<List<Task>> getAllUserTasksByDateRange(User user, DateRange dateRange) {
-        List<Task> tasks = getUserTasks(user);
-         Predicate<Task> dateFilter = getDateFilter(dateRange);
+    public CustomResponse<List<TaskDto>> getAllUserTasks(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
 
-        if(dateFilter == null){
-            return CustomResponse.failed(Error.INVALID_DATE_RANGE);
+        if (user.isPresent()) {
+            List<Task> tasks = getUserTasks(user.get());
+
+            if (tasks.isEmpty()) {
+                return CustomResponse.failed(Error.TASKS_NOT_FOUND);
+            } else {
+                List<TaskDto> taskDtoList = convertListToDto(tasks);
+                return CustomResponse.success(taskDtoList);
+            }
+        } else {
+            return CustomResponse.failed(Error.USER_NOT_FOUND);
         }
+    }
 
-        List<Task> filteredTasks = tasks.stream()
-                .filter(dateFilter)
-                .sorted()
+    public CustomResponse<List<TaskDto>> getAllActiveUserTask(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isPresent()) {
+            List<Task> tasks = getUserTasks(user.get());
+
+            List<Task> activeTasks = tasks.stream()
+                    .filter(Task::isActive)
+                    .toList();
+
+            if (activeTasks.isEmpty()) {
+                return CustomResponse.failed(Error.ACTIVE_TASKS_NOT_FOUND);
+            } else {
+                List<TaskDto> taskDtoList = convertListToDto(activeTasks);
+                return CustomResponse.success(taskDtoList);
+            }
+        } else {
+            return CustomResponse.failed(Error.USER_NOT_FOUND);
+        }
+    }
+
+    public CustomResponse<List<TaskDto>> getAllUserTasksByDateRange(String username, DateRange dateRange) {
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isPresent()) {
+            List<Task> tasks = getUserTasks(user.get());
+            Predicate<Task> dateFilter = getDateFilter(dateRange);
+
+            if (dateFilter == null) {
+                return CustomResponse.failed(Error.INVALID_DATE_RANGE);
+            }
+
+            List<Task> filteredTasks = tasks.stream()
+                    .filter(dateFilter)
+                    .sorted()
+                    .toList();
+
+            if (filteredTasks.isEmpty()) {
+                return CustomResponse.failed(Error.TASKS_NOT_FOUND);
+            } else {
+                List<TaskDto> taskDtoList = convertListToDto(filteredTasks);
+                return CustomResponse.success(taskDtoList);
+            }
+        } else {
+            return CustomResponse.failed(Error.USER_NOT_FOUND);
+        }
+    }
+
+    public CustomResponse<List<TaskDto>> getAllUserActiveTasksByDateRange(String username, DateRange dateRange) {
+        List<TaskDto> tasks = getAllUserTasksByDateRange(username, dateRange).getBody();
+
+        List<TaskDto> filteredTasks = tasks.stream()
+                .filter(TaskDto::isActive)
                 .toList();
 
         if (filteredTasks.isEmpty()) {
-            return CustomResponse.failed(Error.TASKS_NOT_FOUND);
+            return CustomResponse.failed(Error.ACTIVE_TASKS_NOT_FOUND);
         } else {
             return CustomResponse.success(filteredTasks);
         }
     }
 
-    public CustomResponse<List<Task>> getAllUserActiveTasksByDateRange(User user, DateRange dateRange) {
-        List<Task> tasks = getAllUserTasksByDateRange(user, dateRange).getDto();
-
-        List<Task> filteredTasks = tasks.stream()
-                .filter(Task::isActive)
-                .toList();
-
-        if (filteredTasks.isEmpty()) {
-            return CustomResponse.failed(Error.ACTIVE_TASKS_NOT_FOUND);
-        } else {
-            return CustomResponse.success(filteredTasks);
-        }
-    }
-
-    public CustomResponse<Task> editTask(Long taskId, String newDescription, LocalDateTime newDate) {
+    public CustomResponse<TaskDto> editTask(Long taskId, String newDescription, LocalDateTime newDate) {
         Optional<Task> optionalTask = taskRepository.findById(taskId);
 
         if (optionalTask.isPresent()) {
@@ -100,13 +145,15 @@ public class TaskService {
             task.setDate(newDate);
 
             Task updatedTask = taskRepository.save(task);
+            TaskDto taskDto = convertToDto(updatedTask);
 
-            return CustomResponse.success(updatedTask);
+            return CustomResponse.success(taskDto);
         } else {
             return CustomResponse.failed(Error.TASK_NOT_FOUND);
         }
     }
 
+    @Transactional
     public CustomResponse<Task> deleteTask(Long id) {
         Optional<Task> task = taskRepository.findById(id);
 
@@ -116,7 +163,6 @@ public class TaskService {
         } else {
             return CustomResponse.failed(Error.TASK_NOT_FOUND);
         }
-
     }
 
     private List<Task> getUserTasks(User user) {
@@ -134,5 +180,22 @@ public class TaskService {
                     task.getDate().toLocalDate().isBefore(now.plusMonths(1));
             default -> null;
         };
+    }
+
+    private TaskDto convertToDto(Task task) {
+        return TaskDto.builder()
+                .id(task.getId())
+                .username(task.getUser().getUsername())
+                .description(task.getDescription())
+                .date(task.getDate())
+                .createDate(task.getCreateDate())
+                .isActive(task.isActive())
+                .build();
+    }
+
+    private List<TaskDto> convertListToDto(List<Task> tasks) {
+        return tasks.stream()
+                .map(this::convertToDto)
+                .toList();
     }
 }

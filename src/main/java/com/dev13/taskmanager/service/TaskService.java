@@ -1,6 +1,6 @@
 package com.dev13.taskmanager.service;
 
-import com.dev13.taskmanager.data.CustomResponse;
+import com.dev13.taskmanager.controller.responce.CustomResponse;
 import com.dev13.taskmanager.data.DateRange;
 import com.dev13.taskmanager.data.Error;
 import com.dev13.taskmanager.entity.Task;
@@ -20,7 +20,7 @@ import java.util.function.Predicate;
 
 @Service
 @RequiredArgsConstructor
-public class TaskService {
+public class    TaskService {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
@@ -37,6 +37,8 @@ public class TaskService {
                     .createDate(LocalDateTime.now())
                     .isActive(true)
                     .build();
+
+            taskRepository.save(task);
 
             TaskDto taskDto = convertToDto(task);
             return CustomResponse.success(taskDto);
@@ -124,15 +126,15 @@ public class TaskService {
     public CustomResponse<List<TaskDto>> getAllUserActiveTasksByDateRange(String username, DateRange dateRange) {
         List<TaskDto> tasks = getAllUserTasksByDateRange(username, dateRange).getBody();
 
+        if (tasks == null) {
+            return CustomResponse.failed(Error.ACTIVE_TASKS_NOT_FOUND);
+        }
+
         List<TaskDto> filteredTasks = tasks.stream()
                 .filter(TaskDto::isActive)
                 .toList();
 
-        if (filteredTasks.isEmpty()) {
-            return CustomResponse.failed(Error.ACTIVE_TASKS_NOT_FOUND);
-        } else {
-            return CustomResponse.success(filteredTasks);
-        }
+        return CustomResponse.success(filteredTasks);
     }
 
     public CustomResponse<TaskDto> editTask(Long taskId, String newDescription, LocalDateTime newDate) {

@@ -1,5 +1,6 @@
-package com.dev13.taskmanager.data;
+package com.dev13.taskmanager.controller.responce;
 
+import com.dev13.taskmanager.data.Error;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

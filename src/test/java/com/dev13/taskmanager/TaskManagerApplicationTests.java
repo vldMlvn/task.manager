@@ -23,6 +23,7 @@ class TaskManagerApplicationTests {
 
     @Test
     void contextLoads() {
+        System.out.println("test");
     }
 
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {

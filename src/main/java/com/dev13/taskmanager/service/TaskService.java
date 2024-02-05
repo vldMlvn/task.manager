@@ -10,6 +10,7 @@ import com.dev13.taskmanager.repository.TaskRepository;
 import com.dev13.taskmanager.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -164,6 +165,18 @@ public class    TaskService {
             return CustomResponse.noBodySuccess();
         } else {
             return CustomResponse.failed(Error.TASK_NOT_FOUND);
+        }
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    public void updateTaskStatus() {
+        List<Task> tasks = taskRepository.findAll();
+        LocalDateTime currentDate = LocalDateTime.now();
+
+        for (Task task : tasks) {
+            task.setActive(currentDate.isBefore(task.getDate()));
+
+            taskRepository.save(task);
         }
     }
 

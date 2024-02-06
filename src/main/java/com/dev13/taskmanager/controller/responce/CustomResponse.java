@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Builder
@@ -12,13 +13,15 @@ import java.util.Objects;
 @Setter
 public class CustomResponse<T> {
 
-    private Error error;
+    private LocalDateTime timestamp;
+    private String message;
     private T body;
 
     public static <T> CustomResponse<T> success(T dto) {
         return CustomResponse
                 .<T>builder()
-                .error(Error.OK)
+                .timestamp(LocalDateTime.now())
+                .message(Error.OK.getMessage())
                 .body(dto)
                 .build();
     }
@@ -26,7 +29,8 @@ public class CustomResponse<T> {
     public static <T> CustomResponse<T> noBodySuccess() {
         return CustomResponse.
                 <T>builder()
-                .error(Error.OK)
+                .timestamp(LocalDateTime.now())
+                .message(Error.OK.getMessage())
                 .body(null)
                 .build();
     }
@@ -34,7 +38,8 @@ public class CustomResponse<T> {
     public static <T> CustomResponse<T> failed(Error error) {
         return CustomResponse
                 .<T>builder()
-                .error(error)
+                .timestamp(LocalDateTime.now())
+                .message(error.getMessage())
                 .body(null)
                 .build();
     }
@@ -44,18 +49,19 @@ public class CustomResponse<T> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CustomResponse<?> that = (CustomResponse<?>) o;
-        return error == that.error && Objects.equals(body, that.body);
+        return Objects.equals(message, that.message) && Objects.equals(body, that.body);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(error, body);
+        return Objects.hash(message, body);
     }
 
     @Override
     public String toString() {
         return "CustomResponse{" +
-                "error=" + error +
+                "timestamp=" + timestamp +
+                ", message='" + message + '\'' +
                 ", body=" + body +
                 '}';
     }

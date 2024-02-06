@@ -27,8 +27,8 @@ public class CustomResponse<T> {
     }
 
     public static <T> CustomResponse<T> noBodySuccess() {
-        return CustomResponse.
-                <T>builder()
+        return CustomResponse
+                .<T>builder()
                 .timestamp(LocalDateTime.now())
                 .message(Error.OK.getMessage())
                 .body(null)

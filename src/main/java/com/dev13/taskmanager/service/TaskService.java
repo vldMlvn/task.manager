@@ -197,7 +197,7 @@ public class    TaskService {
         };
     }
 
-    private TaskDto convertToDto(Task task) {
+    public TaskDto convertToDto(Task task) {
         return TaskDto.builder()
                 .id(task.getId())
                 .username(task.getUser().getUsername())
@@ -208,7 +208,7 @@ public class    TaskService {
                 .build();
     }
 
-    private List<TaskDto> convertListToDto(List<Task> tasks) {
+    public List<TaskDto> convertListToDto(List<Task> tasks) {
         return tasks.stream()
                 .map(this::convertToDto)
                 .toList();

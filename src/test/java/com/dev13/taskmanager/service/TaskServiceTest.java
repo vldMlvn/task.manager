@@ -419,7 +419,7 @@ import static org.mockito.Mockito.when;
         when(taskRepository.findById(task.getId())).thenReturn(Optional.of(task));
         when(taskRepository.save(any(Task.class))).thenReturn(editedTask);
 
-        CustomResponse<TaskDto> expect = CustomResponse.success(service.convertToDto(task));
+        CustomResponse<TaskDto> expect = CustomResponse.success(service.convertToDto(editedTask));
 
         //When
         CustomResponse<TaskDto> result = service.editTask(task.getId(), newDescription, date);

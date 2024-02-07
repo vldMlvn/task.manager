@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    public UserDto convertToDto(User user){
+    public UserDto convertToDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())

@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
- class TaskServiceTest {
+class TaskServiceTest {
 
     @Mock
     private TaskRepository taskRepository;
@@ -228,11 +228,11 @@ import static org.mockito.Mockito.when;
         CustomResponse<List<TaskDto>> result = service.getAllActiveUserTask("test");
 
         //Then
-        assertEquals(expect,result);
+        assertEquals(expect, result);
     }
 
     @Test
-    void testGetAllActiveUserTasksWithUserNotFound(){
+    void testGetAllActiveUserTasksWithUserNotFound() {
 
         //Given
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
@@ -243,11 +243,11 @@ import static org.mockito.Mockito.when;
         CustomResponse<List<TaskDto>> result = service.getAllActiveUserTask("test");
 
         //Then
-        assertEquals(expect,result);
+        assertEquals(expect, result);
     }
 
     @Test
-    void testGetAllUserTasksByDateRangeSuccessfully(){
+    void testGetAllUserTasksByDateRangeSuccessfully() {
 
         //Given
         User user = User.builder()
@@ -284,12 +284,12 @@ import static org.mockito.Mockito.when;
 
         //When
         assertEquals(expect, resultDay);
-        assertEquals(expect,resultWeek);
-        assertEquals(expect,resultMonth);
+        assertEquals(expect, resultWeek);
+        assertEquals(expect, resultMonth);
     }
 
     @Test
-    void testGetAllUserTasksByDateRangeWithInvalidDateRange(){
+    void testGetAllUserTasksByDateRangeWithInvalidDateRange() {
 
         //Given
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(new User()));
@@ -302,11 +302,11 @@ import static org.mockito.Mockito.when;
                 .getAllUserTasksByDateRange("test", DateRange.INVALID_DATE);
 
         //Then
-        assertEquals(expect,result);
+        assertEquals(expect, result);
     }
 
     @Test
-    void testGetAllUserTasksByDateRangeWithTasksNotFound(){
+    void testGetAllUserTasksByDateRangeWithTasksNotFound() {
 
         //Given
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(new User()));
@@ -318,11 +318,11 @@ import static org.mockito.Mockito.when;
         CustomResponse<List<TaskDto>> result = service.getAllUserTasksByDateRange("test", DateRange.DAY);
 
         //Then
-        assertEquals(expect,result);
+        assertEquals(expect, result);
     }
 
     @Test
-    void testGetAllUserTasksByDateRangeWithUserNotFound(){
+    void testGetAllUserTasksByDateRangeWithUserNotFound() {
 
         //Given
         when(userRepository.findByUsername(any())).thenReturn(Optional.empty());
@@ -334,11 +334,11 @@ import static org.mockito.Mockito.when;
         CustomResponse<List<TaskDto>> result = service.getAllUserTasksByDateRange("test", DateRange.DAY);
 
         //Then
-        assertEquals(expect,result);
+        assertEquals(expect, result);
     }
 
     @Test
-    void testGetAllUserActiveTasksByDateRangeSuccessfully(){
+    void testGetAllUserActiveTasksByDateRangeSuccessfully() {
 
         //Given
         User user = User.builder()
@@ -373,13 +373,13 @@ import static org.mockito.Mockito.when;
                 service.getAllUserActiveTasksByDateRange(user.getUsername(), dateRangeMonth);
 
         //Then
-        assertEquals(expect,resultDay);
-        assertEquals(expect,resultWeek);
-        assertEquals(expect,resultMonth);
+        assertEquals(expect, resultDay);
+        assertEquals(expect, resultWeek);
+        assertEquals(expect, resultMonth);
     }
 
     @Test
-    void testGetAllUserActiveTasksByDateRangeWithActiveTasksNotFound(){
+    void testGetAllUserActiveTasksByDateRangeWithActiveTasksNotFound() {
 
         //Given
         when(userRepository.findByUsername(any())).thenReturn(Optional.of(new User()));
@@ -392,11 +392,11 @@ import static org.mockito.Mockito.when;
                 .getAllUserActiveTasksByDateRange("test", DateRange.DAY);
 
         //Then
-        assertEquals(expect,result);
+        assertEquals(expect, result);
     }
 
     @Test
-    void testEditTaskSuccessfully(){
+    void testEditTaskSuccessfully() {
 
         //Given
         Task task = Task.builder()
@@ -425,11 +425,11 @@ import static org.mockito.Mockito.when;
         CustomResponse<TaskDto> result = service.editTask(task.getId(), newDescription, date);
 
         //Then
-        assertEquals(expect,result);
+        assertEquals(expect, result);
     }
 
     @Test
-    void testEditTaskWithTaskNotFound(){
+    void testEditTaskWithTaskNotFound() {
 
         //Given
         String newDescription = "new description";
@@ -443,11 +443,11 @@ import static org.mockito.Mockito.when;
         CustomResponse<TaskDto> result = service.editTask(1L, newDescription, date);
 
         //Then
-        assertEquals(expect,result);
+        assertEquals(expect, result);
     }
 
     @Test
-    void testDeleteTaskSuccessfully(){
+    void testDeleteTaskSuccessfully() {
 
         //Given
         Task task = Task.builder()
@@ -465,11 +465,11 @@ import static org.mockito.Mockito.when;
         CustomResponse<Task> result = service.deleteTask(task.getId());
 
         //Then
-        assertEquals(expect,result);
+        assertEquals(expect, result);
     }
 
     @Test
-    void testDeleteTaskWithTaskNotFound(){
+    void testDeleteTaskWithTaskNotFound() {
 
         //Given
         when(taskRepository.findById(any(Long.class))).thenReturn(Optional.empty());
@@ -479,11 +479,11 @@ import static org.mockito.Mockito.when;
         CustomResponse<Task> result = service.deleteTask(1L);
 
         //Then
-        assertEquals(expect,result);
+        assertEquals(expect, result);
     }
 
     @Test
-    void testUpdateStatus(){
+    void testUpdateStatus() {
 
         //Given
         LocalDateTime date = LocalDateTime.now().minusDays(1);
@@ -504,6 +504,6 @@ import static org.mockito.Mockito.when;
         service.updateTaskStatus();
 
         //Then
-        assertEquals(expected,task);
+        assertEquals(expected, task);
     }
 }

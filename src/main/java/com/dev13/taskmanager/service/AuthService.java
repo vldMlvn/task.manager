@@ -60,11 +60,11 @@ public class AuthService {
         }
     }
 
-    public CustomResponse<AuthDto> login (LoginRequest request){
+    public CustomResponse<AuthDto> login(LoginRequest request) {
 
         Optional<User> userOptional = repository.findByUsername(request.getUsername());
 
-        if(userOptional.isEmpty()){
+        if (userOptional.isEmpty()) {
             return CustomResponse.failed(Error.INVALID_USERNAME);
         }
 
@@ -85,24 +85,24 @@ public class AuthService {
         return CustomResponse.success(authDto);
     }
 
-    private boolean usernameIsValid(String username){
+    private boolean usernameIsValid(String username) {
         return username != null &&
                 username.length() >= MIN_USERNAME_LENGTH &&
                 username.length() <= MAX_USERNAME_LENGTH;
     }
 
-    private boolean passwordIsValid(String password){
+    private boolean passwordIsValid(String password) {
         return password != null &&
                 password.length() >= MIN_PASSWORD_LENGTH &&
                 password.length() <= MAX_PASSWORD_LENGTH;
     }
 
-    private boolean emailIsValid(String email){
+    private boolean emailIsValid(String email) {
         return email != null &&
                 email.matches(EMAIL_REGEX);
     }
 
-    private User createUser (String username, String password, String email){
+    private User createUser(String username, String password, String email) {
         return User.builder()
                 .username(username)
                 .password(passwordEncoder.encode(password))

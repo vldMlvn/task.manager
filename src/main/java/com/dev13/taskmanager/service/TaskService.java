@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 
 @Service
 @RequiredArgsConstructor
-public class    TaskService {
+public class TaskService {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;

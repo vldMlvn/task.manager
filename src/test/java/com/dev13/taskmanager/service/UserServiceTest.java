@@ -3,12 +3,13 @@ package com.dev13.taskmanager.service;
 import com.dev13.taskmanager.entity.User;
 import com.dev13.taskmanager.entity.dto.UserDto;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UserServiceTest {
 
     @Test
-    void testConvertToDto(){
+    void testConvertToDto() {
 
         //Given
         User user = User.builder()
@@ -29,7 +30,7 @@ class UserServiceTest {
         UserDto result = service.convertToDto(user);
 
         //Then
-        assertEquals(expect,result);
+        assertEquals(expect, result);
     }
 }
 
